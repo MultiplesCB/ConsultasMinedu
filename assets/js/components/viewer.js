@@ -323,27 +323,80 @@ function renderDataTable(data, container, maxRows = 10) {
  * @param {Object} record - Parsed record
  * @param {HTMLElement} container - Container
  */
-function renderSplitPdfView(file, record, container) {
+async function renderSplitPdfView(file, record, container) {
   container.innerHTML = '';
   
   const layout = createElement('div', { 
     className: 'split-view-container'
   });
 
-  // Left: Document Viewer (Iframe for PDF, Img for Image)
+  // Left: Document Viewer
   const docUrl = URL.createObjectURL(file);
-  let docFrame;
+  const docViewer = createElement('div', { className: 'doc-viewer-frame' }); // Container for canvas/img
+  
+  // Apply styles to ensure it scrolls if needed
+  docViewer.style.overflowY = 'auto';
+  docViewer.style.display = 'flex';
+  docViewer.style.flexDirection = 'column';
+  docViewer.style.alignItems = 'center';
+  docViewer.style.gap = '10px';
+  docViewer.style.backgroundColor = '#525659'; // Generic PDF viewer background
 
   if (file.type.startsWith('image/')) {
-      docFrame = createElement('img', {
+      const img = createElement('img', {
           src: docUrl,
-          className: 'doc-viewer-frame'
+          style: 'max-width: 100%; height: auto; display: block;'
       });
+      docViewer.appendChild(img);
   } else {
-      docFrame = createElement('iframe', {
-          src: docUrl,
-          className: 'doc-viewer-frame'
-      });
+      // PDF Rendering with PDF.js
+      try {
+          docViewer.innerHTML = '<div style="color: white; padding: 20px;">Cargando vista previa...</div>';
+          
+          // Load PDF
+          const loadingTask = pdfjsLib.getDocument(docUrl);
+          const pdf = await loadingTask.promise;
+          
+          docViewer.innerHTML = ''; // Clear loading message
+
+          // Render all pages (usually just 1 for boletas, but good to be safe)
+          for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+              const page = await pdf.getPage(pageNum);
+              
+              // Calculate scale to fit container width
+              // We'll estimate a reasonable width based on window or container, 
+              // but purely canvas-based, we usually define a scale. 
+              // Let's aim for a scale that makes text readable. 1.5 is usually good for mobile.
+              // Or better: use viewport width.
+              const viewportWait = page.getViewport({ scale: 1.5 });
+              
+              const canvas = document.createElement('canvas');
+              const context = canvas.getContext('2d');
+              canvas.height = viewportWait.height;
+              canvas.width = viewportWait.width;
+              
+              // Responsive style for canvas
+              canvas.style.maxWidth = '100%';
+              canvas.style.height = 'auto';
+              canvas.style.marginBottom = '10px';
+              canvas.style.boxShadow = '0 2px 5px rgba(0,0,0,0.3)';
+
+              docViewer.appendChild(canvas);
+
+              const renderContext = {
+                  canvasContext: context,
+                  viewport: viewportWait
+              };
+              await page.render(renderContext).promise;
+          }
+
+      } catch (error) {
+          console.error("Error rendering PDF:", error);
+          docViewer.innerHTML = `<div style="color: #ffaaaa; padding: 20px;">
+              <p>No se pudo visualizar el PDF aquí.</p>
+              <a href="${docUrl}" target="_blank" class="btn btn-secondary" style="margin-top:10px;">Abrir PDF Externamente</a>
+          </div>`;
+      }
   }
   
   // Right: Credit Card
@@ -359,7 +412,7 @@ function renderSplitPdfView(file, record, container) {
     }
   }
 
-  layout.appendChild(docFrame);
+  layout.appendChild(docViewer);
   layout.appendChild(creditWrapper);
   container.appendChild(layout);
 }
