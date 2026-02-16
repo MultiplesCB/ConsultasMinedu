@@ -14,7 +14,7 @@ function initAdmin() {
   const loginForm = document.getElementById('admin-login-form');
 
   // Initial UI Check
-  updateAuthUI();
+
 
   // File upload button
   const fileUploadBtn = document.getElementById('file-upload-btn');
@@ -31,29 +31,7 @@ function initAdmin() {
     btn.addEventListener('click', () => switchTab(btn.dataset.tab));
   });
 
-  // Lock Button Logic
-  if (lockBtn) {
-    lockBtn.addEventListener('click', () => {
-      const isAdmin = localStorage.getItem('isAdmin') === 'true';
-      if (isAdmin) {
-        // Logout
-        if (logoutModal) {
-          logoutModal.classList.add('active');
-        } else if (confirm('¿Desea cerrar la sesión de administrador?')) {
-          // Fallback if modal is missing
-          localStorage.removeItem('isAdmin');
-          updateAuthUI();
-          showToast('Sesión cerrada correctamente', 'info');
-          document.getElementById('user-view').style.display = 'block';
-          document.getElementById('admin-view').style.display = 'none';
-        }
-      } else {
-        // Open Modal
-        modal.classList.add('active');
-        document.getElementById('admin-password').focus();
-      }
-    });
-  }
+
 
   // Modal Close Logic
   if (closeModalBtn) {
@@ -77,13 +55,8 @@ function initAdmin() {
   // Handle Logout Confirmation
   if (confirmLogoutBtn) {
     confirmLogoutBtn.addEventListener('click', () => {
-      localStorage.removeItem('isAdmin');
-      updateAuthUI();
-      showToast('Sesión cerrada correctamente', 'info');
-      // Switch back to user view
-      document.getElementById('user-view').style.display = 'block';
-      document.getElementById('admin-view').style.display = 'none';
-      closeLogout();
+      handleLogout();
+      document.getElementById('logout-modal').classList.remove('active');
     });
   }
 
@@ -97,31 +70,66 @@ function initAdmin() {
     }
   });
 
+  // Check current session
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    updateAuthUI(session);
+    updateAppView(!!session);
+  });
+
+  // Listen for auth changes
+  supabase.auth.onAuthStateChange((_event, session) => {
+    updateAuthUI(session);
+    updateAppView(!!session);
+    
+    if (!session) {
+      if (document.getElementById('admin-view').style.display === 'block') {
+         showToast('Sesión expirada', 'info');
+      }
+    }
+  });
+
   // Login Form Submit
   if (loginForm) {
-    loginForm.addEventListener('submit', (e) => {
+    loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      
+      const emailInput = document.getElementById('admin-email');
       const passwordInput = document.getElementById('admin-password');
+      const loginBtnText = document.getElementById('login-btn-text');
+      const loginSpinner = document.getElementById('login-spinner');
+      
+      const email = emailInput.value;
       const password = passwordInput.value;
 
-      if (password === CONFIG.ADMIN_PASSWORD) {
-        localStorage.setItem('isAdmin', 'true');
+      // UI Loading
+      if(loginBtnText) loginBtnText.style.display = 'none';
+      if(loginSpinner) loginSpinner.style.display = 'inline-block';
+
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: email,
+          password: password,
+        });
+
+        if (error) throw error;
+
         modal.classList.remove('active');
-        updateAuthUI();
         showToast('Bienvenido, Administrador', 'success');
+        
+        emailInput.value = '';
         passwordInput.value = '';
         
-        // Auto-switch to admin view
-        document.getElementById('user-view').style.display = 'none';
-        document.getElementById('admin-view').style.display = 'block';
-      } else {
-        showToast('Contraseña incorrecta', 'error');
+        // Switch view handled by onAuthStateChange
+
+      } catch (error) {
+        showToast('Error de credenciales: ' + error.message, 'error');
         passwordInput.value = '';
         passwordInput.focus();
-        
-        // Shake animation effect
         passwordInput.classList.add('error-shake');
         setTimeout(() => passwordInput.classList.remove('error-shake'), 500);
+      } finally {
+        if(loginBtnText) loginBtnText.style.display = 'inline';
+        if(loginSpinner) loginSpinner.style.display = 'none';
       }
     });
   }
@@ -130,15 +138,45 @@ function initAdmin() {
 /**
  * Update UI based on authentication state
  */
-function updateAuthUI() {
-  const isAdmin = localStorage.getItem('isAdmin') === 'true';
+/**
+ * Update UI based on authentication state
+ * @param {Object} session - Supabase session object
+ */
+function updateAuthUI(session) {
+  const isAdmin = !!session;
   const lockBtn = document.getElementById('admin-lock-btn');
   
   if (lockBtn) {
     lockBtn.innerHTML = isAdmin ? '<i class="fa-solid fa-lock-open" style="font-size: 1.2rem"></i>' : '<i class="fa-solid fa-lock" style="font-size: 1.2rem"></i>';
     lockBtn.title = isAdmin ? 'Cerrar Sesión Admin' : 'Acceso Administrativo';
     lockBtn.style.color = isAdmin ? 'var(--success)' : 'var(--text-secondary)';
+    
+    // Update click handler to use latest session state
+    lockBtn.onclick = () => {
+      if (isAdmin) {
+        // Logout logic
+        const logoutModal = document.getElementById('logout-modal');
+        if (logoutModal) {
+          logoutModal.classList.add('active');
+        } else if (confirm('¿Desea cerrar la sesión de administrador?')) {
+           handleLogout();
+        }
+      } else {
+        // Open Login Modal
+        document.getElementById('login-modal').classList.add('active');
+        document.getElementById('admin-email').focus();
+      }
+    };
   }
+}
+
+async function handleLogout() {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+        showToast('Error al cerrar sesión', 'error');
+    } else {
+        showToast('Sesión cerrada correctamente', 'info');
+    }
 }
 
 /**
@@ -155,6 +193,27 @@ function switchTab(tabName) {
   document.querySelectorAll('.tab-content').forEach(content => {
     content.classList.toggle('active', content.id === `${tabName}-tab`);
   });
+}
+
+/**
+ * Update Application View state
+ * @param {boolean} isAdmin - Is admin logged in
+ */
+function updateAppView(isAdmin) {
+  const userView = document.getElementById('user-view');
+  const adminView = document.getElementById('admin-view');
+  const loginForm = document.getElementById('login-form'); // Note: login-form ID might not exist in index.html, checking
+  const headerModeText = document.getElementById('header-mode-text');
+  
+  if (isAdmin) {
+    if (userView) userView.style.display = 'none';
+    if (adminView) adminView.style.display = 'block';
+    if (headerModeText) headerModeText.textContent = 'Panel Administrador';
+  } else {
+    if (userView) userView.style.display = 'block';
+    if (adminView) adminView.style.display = 'none';
+    if (headerModeText) headerModeText.textContent = 'Portal de Consultas';
+  }
 }
 
 /**

@@ -12,19 +12,19 @@ const AppState = {
  * Initialize application
  */
 function initApp() {
-  console.log('Initializing ConsultasMinedu Application...');
+
   
   // Initialize components
-  // initAuth(); // Removed: Handled by admin.js
+  initSupabase(); // Initialize Supabase Client first
   initSearch();
   initAdmin();
   initPDFUpload();
-  initCamera();
+
   
   // Set initial view
   updateView();
   
-  console.log('Application initialized successfully');
+
 }
 
 /**
@@ -108,113 +108,24 @@ function handleProcessingError(error) {
   showToast(`Error de lectura: ${error.message}`, 'error');
 }
 
-/**
- * Initialize Camera Functionality
- */
-function initCamera() {
-    const cameraBtn = document.getElementById('camera-btn');
-    const modal = document.getElementById('camera-modal');
-    const closeBtn = document.getElementById('close-camera-modal');
-    const video = document.getElementById('camera-video');
-    const canvas = document.getElementById('camera-canvas');
-    const captureBtn = document.getElementById('capture-btn');
-    let stream = null;
 
-    if (!cameraBtn || !modal) return;
-
-    // Open Camera
-    cameraBtn.addEventListener('click', async () => {
-        try {
-            stream = await navigator.mediaDevices.getUserMedia({ 
-                video: { facingMode: 'environment' } // Prefer back camera on mobile
-            });
-            video.srcObject = stream;
-            modal.style.display = 'block';
-        } catch (err) {
-            console.error(err);
-            showToast('No se pudo acceder a la cámara. Verifique los permisos.', 'error');
-        }
-    });
-
-    // Close Camera
-    const stopCamera = () => {
-        if (stream) {
-            stream.getTracks().forEach(track => track.stop());
-            stream = null;
-        }
-        modal.style.display = 'none';
-    };
-
-    closeBtn.addEventListener('click', stopCamera);
-    window.addEventListener('click', (e) => {
-        if (e.target === modal) stopCamera();
-    });
-
-    // Capture
-    captureBtn.addEventListener('click', () => {
-        if (!stream) return;
-
-        // Set dimensions
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        
-        // Draw
-        const context = canvas.getContext('2d');
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        
-        // Convert to Blob/File
-        canvas.toBlob(async (blob) => {
-            stopCamera();
-            const file = new File([blob], "camera_capture.jpg", { type: "image/jpeg" });
-            
-            // Process
-            const resultsContainer = document.getElementById('search-results');
-            resultsContainer.innerHTML = '';
-            showLoading('Procesando Foto (OCR)...');
-            
-            try {
-                if (typeof Tesseract === 'undefined') {
-                    throw new Error('Librería OCR no cargada.');
-                }
-                const record = await processBoletaImage(file);
-                handleProcessingSuccess(file, record, resultsContainer);
-            } catch (error) {
-                handleProcessingError(error);
-            }
-        }, 'image/jpeg', 0.95);
-    });
-}
 
 /**
  * Update view based on current state
  */
+/**
+ * Update view based on current state
+ * Initially sets to User view. Admin view is handled asynchronously by admin.js
+ */
 function updateView() {
-  const userView = document.getElementById('user-view');
-  const adminView = document.getElementById('admin-view');
-  const loginForm = document.getElementById('login-form');
-  const adminStatus = document.getElementById('admin-status');
-  const headerModeText = document.getElementById('header-mode-text');
-  
-  // Check localStorage for admin state since admin.js manages it there
-  const isAdmin = localStorage.getItem('isAdmin') === 'true';
-  // Sync AppState (though mostly unused now)
-  AppState.isAdmin = isAdmin;
+    // Default to User View
+    const userView = document.getElementById('user-view');
+    const adminView = document.getElementById('admin-view');
+    const headerModeText = document.getElementById('header-mode-text');
 
-  if (AppState.isAdmin) {
-    // Show admin view
-    if (userView) userView.style.display = 'none';
-    if (adminView) adminView.style.display = 'block';
-    if (loginForm) loginForm.style.display = 'none';
-    if (adminStatus) adminStatus.style.display = 'block';
-    if (headerModeText) headerModeText.textContent = 'Panel Administrador';
-  } else {
-    // Show user view
     if (userView) userView.style.display = 'block';
     if (adminView) adminView.style.display = 'none';
-    if (loginForm) loginForm.style.display = 'block';
-    if (adminStatus) adminStatus.style.display = 'none';
     if (headerModeText) headerModeText.textContent = 'Portal de Consultas';
-  }
 }
 
 /**
@@ -225,19 +136,19 @@ function checkConfiguration() {
     console.warn('[WARN] Supabase is not configured. Please update config.js with your credentials.');
     console.warn('The application will work in offline mode with limited functionality.');
   } else {
-    console.log('[INFO] Supabase is configured');
+
   }
   
   if (!window.XLSX) {
     console.warn('[WARN] SheetJS library not loaded. Excel export will not be available.');
   } else {
-    console.log('[INFO] SheetJS library loaded');
+
   }
   
   if (!window.supabase) {
     console.warn('[WARN] Supabase client library not loaded. Database features will not be available.');
   } else {
-    console.log('[INFO] Supabase client library loaded');
+
   }
 }
 

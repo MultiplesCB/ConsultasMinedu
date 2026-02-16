@@ -332,7 +332,7 @@ function renderSplitPdfView(file, record, container) {
   container.innerHTML = '';
   
   const layout = createElement('div', { 
-    style: 'display: grid; grid-template-columns: 1fr 350px; gap: 2rem; height: 800px; padding: 1rem;' 
+    className: 'split-view-container'
   });
 
   // Left: Document Viewer (Iframe for PDF, Img for Image)
@@ -342,17 +342,17 @@ function renderSplitPdfView(file, record, container) {
   if (file.type.startsWith('image/')) {
       docFrame = createElement('img', {
           src: docUrl,
-          style: 'width: 100%; height: 100%; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); background: #f0f0f0;'
+          className: 'doc-viewer-frame'
       });
   } else {
       docFrame = createElement('iframe', {
           src: docUrl,
-          style: 'width: 100%; height: 100%; border: none; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);'
+          className: 'doc-viewer-frame'
       });
   }
   
   // Right: Credit Card
-  const creditWrapper = createElement('div', { style: 'height: fit-content;' });
+  const creditWrapper = createElement('div', { className: 'credit-wrapper' });
   
   if (typeof calculateCreditCapacity === 'function') {
     const creditEval = calculateCreditCapacity(record);

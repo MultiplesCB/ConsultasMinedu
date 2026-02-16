@@ -8,9 +8,9 @@ let supabaseClient = null;
  * Initialize Supabase client
  * @returns {Object|null} - Supabase client or null if not configured
  */
-function getSupabaseClient() {
-  if (supabaseClient) {
-    return supabaseClient;
+function initSupabase() {
+  if (window.supabaseClient) {
+    return window.supabaseClient;
   }
   
   if (!isSupabaseConfigured()) {
@@ -19,13 +19,40 @@ function getSupabaseClient() {
   }
   
   try {
-    const { createClient } = supabase;
-    supabaseClient = createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY);
-    return supabaseClient;
+    // Check if we already initialized (if window.supabase is the client)
+    if (window.supabase && window.supabase.auth) {
+        return window.supabase;
+    }
+
+    // Access the library
+    // If window.supabase is not the client, it must be the library (or undefined)
+    const supabaseLib = window.supabase;
+    
+    if (!supabaseLib || !supabaseLib.createClient) {
+        console.warn('Supabase library not loaded via CDN');
+        return null;
+    }
+
+    const { createClient } = supabaseLib;
+    
+    window.supabaseClient = createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY);
+    
+    // Overwrite global to be the client, as expected by other scripts
+    window.supabase = window.supabaseClient; 
+    
+
+    return window.supabase;
   } catch (error) {
     console.error('Error creating Supabase client:', error);
     return null;
   }
+}
+
+/**
+ * Get the initialized client
+ */
+function getSupabaseClient() {
+    return window.supabaseClient || initSupabase();
 }
 
 /**

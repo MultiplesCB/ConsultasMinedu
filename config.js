@@ -9,7 +9,9 @@ const CONFIG = {
   SUPABASE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRianNrYm9hdHJzbW53a2d1eWRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEwMTI2NTEsImV4cCI6MjA4NjU4ODY1MX0.oyNWL7o5b76sMl39JAqCVPwc_l1FF4340Dw0cKQuZ94',
   
   // Admin Configuration
-  ADMIN_PASSWORD: 'admin123',
+  // Admin Configuration
+  // Password removed - using Supabase Auth
+
   
   // Application Settings
   BATCH_SIZE: 100,           // Records per batch for Supabase sync

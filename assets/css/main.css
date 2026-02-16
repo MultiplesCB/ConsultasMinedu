@@ -356,3 +356,26 @@ body {
 .p-md { padding: var(--spacing-md); }
 .p-lg { padding: var(--spacing-lg); }
 .p-xl { padding: var(--spacing-xl); }
+
+/* Split View Layout (PDF + Credit) */
+.split-view-container {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 2rem;
+  height: 800px;
+  padding: 1rem;
+}
+
+.doc-viewer-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 8px;
+  box-shadow: var(--shadow-md);
+  object-fit: contain;
+  background: #f0f0f0;
+}
+
+.credit-wrapper {
+  height: fit-content;
+}

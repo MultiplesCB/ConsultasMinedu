@@ -23,6 +23,17 @@
     width: 100%;
     margin-bottom: 20px;
   }
+
+  /* Split View Responsive */
+  .split-view-container {
+    grid-template-columns: 1fr; /* Stack vertically */
+    height: auto;
+    gap: 1.5rem;
+  }
+  
+  .doc-viewer-frame {
+    height: 500px; /* Fixed height for viewer on smaller screens */
+  }
   
   /* Data Grid - 2 columns on tablet */
   .data-grid {
@@ -89,6 +100,21 @@
     width: 100%;
     max-width: 100%;
     margin: 0;
+  }
+
+  /* Split View Mobile */
+  .split-view-container {
+    padding: 0;
+    gap: 1rem;
+  }
+
+  .doc-viewer-frame {
+    height: 400px; /* Slightly smaller on mobile to fit better */
+    background: #e5e5e5;
+  }
+  
+  .credit-wrapper {
+    width: 100%;
   }
 
   /* Official Boleta Mobile Overrides */

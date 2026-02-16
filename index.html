@@ -45,11 +45,19 @@
                 <div class="modal-body">
                     <form id="admin-login-form">
                         <div class="form-group">
+                            <label for="admin-email">Correo Electrónico</label>
+                            <input type="email" id="admin-email" class="form-input" placeholder="admin@example.com"
+                                autocomplete="email" required>
+                        </div>
+                        <div class="form-group">
                             <label for="admin-password">Contraseña</label>
                             <input type="password" id="admin-password" class="form-input"
-                                placeholder="Ingrese contraseña" autocomplete="current-password">
+                                placeholder="Ingrese contraseña" autocomplete="current-password" required>
                         </div>
-                        <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <span id="login-btn-text">Ingresar</span>
+                            <i id="login-spinner" class="fa-solid fa-spinner fa-spin" style="display: none;"></i>
+                        </button>
                     </form>
                 </div>
             </div>
@@ -80,29 +88,7 @@
                 <h1 class="search-title">Sistema de Consultas MINEDU</h1>
                 <p class="search-subtitle">Consulta tu información por DNI</p>
 
-                <!-- Camera Modal -->
-                <div id="camera-modal" class="modal">
-                    <div class="modal-content" style="max-width: 600px;">
-                        <div class="modal-header">
-                            <h3><i class="fa-solid fa-camera" style="margin-right: 0.5rem;"></i> Tomar Foto de Boleta
-                            </h3>
-                            <button class="close-modal" id="close-camera-modal">&times;</button>
-                        </div>
-                        <div class="modal-body" style="text-align: center;">
-                            <div class="video-container"
-                                style="position: relative; width: 100%; padding-top: 75%; background: black; overflow: hidden; border-radius: 8px;">
-                                <video id="camera-video" autoplay playsinline
-                                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;"></video>
-                                <canvas id="camera-canvas" style="display: none;"></canvas>
-                            </div>
-                            <div style="margin-top: 1rem; display: flex; justify-content: center; gap: 1rem;">
-                                <button id="capture-btn" class="btn btn-primary btn-lg">Capturar Foto</button>
-                            </div>
-                            <p style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">Asegúrate que la boleta esté
-                                bien iluminada.</p>
-                        </div>
-                    </div>
-                </div>
+
 
                 <form id="search-form" class="search-form">
                     <div class="search-box">
@@ -123,10 +109,7 @@
                         <i class="fa-regular fa-file-pdf"></i>
                         Evaluar Boleta (PDF / Imagen)
                     </button>
-                    <button id="camera-btn" class="btn btn-primary"
-                        style="display: inline-flex; align-items: center; gap: 0.5rem; margin-left: 0.5rem; background-color: var(--primary);">
-                        <i class="fa-solid fa-camera"></i>
-                    </button>
+
                 </div>
             </div>
 
