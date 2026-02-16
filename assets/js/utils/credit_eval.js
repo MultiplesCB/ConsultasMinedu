@@ -53,7 +53,7 @@ function calculateCreditCapacity(record) {
     // Expanded keywords for PDF extraction compatibility
     const legalKeywords = [
         'snp', 'afp', 'quintaca', 'quinta', 'judicial', 'dl20530', 'ipssvid', 'dl. 20530', 
-        'derrama', 'sutep', 'subcafe', 'cafae' // Added common ones just in case
+        'derrama', 'sutep' // Removed 'subcafe', 'cafae' as they are NOT legal discounts
     ];
     // Strict codes for LIS
     const legalCodes = ['0002', '0113', '0121', '0004', '0001'];
