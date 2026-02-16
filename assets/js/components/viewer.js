@@ -135,6 +135,18 @@ function renderBoleta(record, container, fullDetails = false) {
   deductionKeys.forEach(key => {
     const name = key.replace('DES_', '').replace(/^\d+\s*/, '').toUpperCase();
     const row = createElement('div', { className: 'detail-item' });
+    
+    // Check for target discount (1535 COOPMULT) - Robust check
+    if (key.includes('1535') || 
+        key.toUpperCase().includes('COOPMULT') || 
+        name.includes('COOPMULT') ||
+        name.includes('COOP. MULT')) {
+        
+        // Simplified style: just blue text as requested
+        row.style.setProperty('color', '#2563eb', 'important'); // Blue text
+        row.style.fontWeight = '600'; // Semi-bold for readability (optional, but good for colored text)
+    }
+
     row.appendChild(createElement('span', { className: 'detail-concept' }, [name]));
     row.appendChild(createElement('span', { className: 'detail-amount' }, [formatCurrency(record[key]).replace('S/ ', '')]));
     listDescuentos.appendChild(row);
