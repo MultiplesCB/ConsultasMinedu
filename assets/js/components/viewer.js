@@ -19,11 +19,6 @@ function renderBoleta(record, container, fullDetails = false) {
   
   // Left: Logo
   const headerLeft = createElement('div', { className: 'header-left' });
-  const logo = createElement('div', { 
-    style: 'background: #333; color: white; padding: 4px 8px; font-weight: bold; font-size: 10px; display: inline-block;' 
-  }, ['PERÚ | Ministerio de Educación']);
-  headerLeft.appendChild(logo);
-  headerLeft.appendChild(createElement('div', { style: 'font-size: 8px; margin-top: 2px;' }, [`CÓDIGO MODULAR - SECUENCIAL: ${record.ID || ''}`]));
   
   // Center: Title
   const headerCenter = createElement('div', { className: 'header-center' }, [

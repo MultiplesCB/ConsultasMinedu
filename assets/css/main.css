@@ -236,12 +236,6 @@ body {
   margin-bottom: var(--spacing-sm);
 }
 
-.search-subtitle {
-  font-size: 1.125rem;
-  color: var(--text-secondary);
-  margin-bottom: var(--spacing-2xl);
-}
-
 /* Footer */
 .footer {
   text-align: center;

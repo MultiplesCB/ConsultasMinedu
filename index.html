@@ -85,10 +85,7 @@
         <!-- User View (Default) -->
         <div id="user-view" class="view-container">
             <div class="search-container">
-                <h1 class="search-title">Sistema de Consultas MINEDU</h1>
-                <p class="search-subtitle">Consulta tu información por DNI</p>
-
-
+                <h1 class="search-title">Consulta tu información por DNI</h1>
 
                 <form id="search-form" class="search-form">
                     <div class="search-box">
@@ -209,6 +206,17 @@
 
     <!-- Main Application -->
     <script src="assets/js/app.js"></script>
+
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.log('Service Worker registration failed: ', err));
+            });
+        }
+    </script>
 </body>
 
 </html>

@@ -74,18 +74,17 @@
     font-size: 1.5rem;
   }
   
-  .search-subtitle {
-    font-size: 1rem;
-  }
-  
   .search-box {
-    flex-direction: column;
+    flex-direction: row; /* Horizontal alignment */
     gap: var(--spacing-sm);
+    align-items: center;
   }
   
   .search-btn {
-    width: 100%;
+    width: auto; /* Natural width */
     justify-content: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
   
   /* Results Layout STACK */
@@ -119,23 +118,64 @@
 
   /* Official Boleta Mobile Overrides */
   .official-boleta {
-    font-size: 13px !important; /* Slightly smaller on mobile if needed */
+    font-size: 12px !important; /* Slightly smaller on mobile if needed */
   }
 
   .official-header {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+    flex-direction: row; /* Horizontal alignment */
+    justify-content: space-between;
+    align-items: center; /* Align vertically in center */
+    text-align: left;
     gap: 10px;
+    margin-bottom: 5px;
+    padding-bottom: 5px;
   }
 
-  .header-left, .header-center, .header-right {
-    text-align: center;
-    width: 100%;
+  .header-center {
+    text-align: left;
+    flex: 0 0 auto;
+  }
+
+  .header-center h1 {
+    font-size: 16px !important; /* Smaller to fit */
+    line-height: 1.1;
+    margin-bottom: 0;
+    text-align: left;
   }
   
-  .header-center h1 {
-    font-size: 20px !important;
+  .header-right {
+    text-align: right;
+    width: auto;
+    font-size: 10px;
+  }
+  
+  .header-left {
+     display: none; /* Hide if empty or unused on mobile to save space */
+  }
+
+  /* Compact Result Card */
+  .result-card {
+    padding: 0.5rem !important; /* Reduced to minimum padding */
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .result-card.success {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .result-card.success p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.2;
+  }
+
+  /* Make BOLETA DE PAGO header tighter */
+  .periodo-highlight {
+     font-size: 14px;
+     margin-top: 0;
   }
 
   /* Data Grid - 1 column on mobile */

@@ -83,7 +83,7 @@ async function performSearch(dni, resultsContainerId) {
       // Show success message
       const successCard = createElement('div', { className: 'result-card success' }, [
         createElement('div', { 
-          style: 'display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;'
+          style: 'display: flex; align-items: center; justify-content: space-between; margin-bottom: 0;'
         }, [
           createElement('span', { className: 'status-badge success' }, [
               createElement('i', { className: 'fa-solid fa-circle-check', style: 'margin-right: 0.5rem;' }),
