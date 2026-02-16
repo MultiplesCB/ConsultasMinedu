@@ -168,11 +168,22 @@ function parsePDFDataWithCoords(items, pageWidth) {
   }
 
 
-  // 2. Extract Details (Ingresos vs Descuentos)
+  // 1. Dynamic Split Point Strategy
+  // Find "INGRESOS" and "DESCUENTOS" headers to determine the split line more accurately
+  const ingresosHeader = items.find(i => /INGRESOS/i.test(i.text));
+  const descuentosHeader = items.find(i => /DESCUENTOS/i.test(i.text) && !/TOTAL/i.test(i.text)); // Avoid "TOTAL DESCUENTOS"
+  
+  if (descuentosHeader) {
+      // Use the Descuentos header X position as the boundary (minus a small buffer)
+      // Usually Descuentos header is at start of the column.
+      splitX = descuentosHeader.x - 20;
+  }
+  
+  // 3. Extract Details (Ingresos vs Descuentos)
   // ... (Boundaries logic remains same)
   // Find Y boundaries
   const headerBottomY = nameLabel ? nameLabel.y - 50 : 500; 
-  const totalLabel = items.find(i => i.text.match(/TOTAL\s*INGRESOS|LIQUIDO|TOTAL\s*DESCUENTOS/i));
+  const totalLabel = items.find(i => i.text.match(/TOTAL\s*INGRESOS|LIQUIDO|TOTAL\s*DESCUENTOS|T\.\s*HABERES/i));
   const footerTopY = totalLabel ? totalLabel.y + 10 : 100;
 
   // Filter items in the body section
@@ -186,23 +197,41 @@ function parsePDFDataWithCoords(items, pageWidth) {
   const extractEntries = (colItems, prefix) => {
       const lines = groupItemsByLine(colItems);
       lines.forEach(line => {
-          // Expect: "Concepto Amount" or "Code Concepto Amount"
-          // Regex to capture amount at end, allowing for 'S/ ' prefix potentially or just number
-          // And strict decimal structure
-          const amountMatch = line.match(/(?:S\/\s*)?([\d,]+\.\d{2})$/);
+          // Robust Regex:
+          // 1. Optional currency symbol S/ or S/.
+          // 2. Capture the amount: digits, optional commas, dot, 2 digits.
+          // 3. Allow for trailing spaces or small noise (though we target the end $)
+          // 4. Using [\d,\.]+ to be more permissive, then validating with parseFloat
+          
+          // Match the LAST number in the line that looks like an amount
+          const match = line.match(/(?:S\/\.?\s*)?([\d,]+\.\d{2})(?=\s*$|\s+[A-Z])/); // Added lookahead for end or text
+          // Fallback: look for any pattern like "123.45" at end of string
+          const simpleMatch = line.match(/([\d,]+\.\d{2})\s*$/);
+          
+          const amountMatch = match || simpleMatch;
           
           if (amountMatch) {
               const amountStr = amountMatch[1];
               const amountVal = parseFloat(amountStr.replace(/,/g, ''));
-              let concept = line.substring(0, line.indexOf(amountMatch[0])).trim();
               
-              // Cleanup concept leading chars if any
-              concept = concept.replace(/^S\/\s*/, ''); 
+              // Concept is everything before the match
+              let concept = line.substring(0, line.lastIndexOf(amountStr)).trim();
               
-              if (concept.length > 2 && amountVal > 0) {
-                  let key = `${prefix}_${concept}`;
-                  if (record[key]) key += '_2'; 
-                  record[key] = amountStr; // Store string with comma for display
+              // Cleanup concept leading chars if any (currency or code junk)
+              concept = concept.replace(/S\/\.?\s*$/, '').trim();
+              concept = concept.replace(/^S\/\.?\s*/, ''); 
+              
+              if (concept.length > 2 && amountVal >= 0) { // Allow 0 amounts? usually no, but maybe
+                  if (amountVal > 0) {
+                      let key = `${prefix}_${concept}`;
+                      // Check for duplicate keys (rare but possible)
+                      if (record[key]) {
+                           // If exists, try to append a counter or sum it?
+                           // Usually unique names. Let's just append random ID or counter
+                           key += `_${Math.floor(Math.random() * 1000)}`;
+                      }
+                      record[key] = amountStr; 
+                  }
               }
           }
       });
