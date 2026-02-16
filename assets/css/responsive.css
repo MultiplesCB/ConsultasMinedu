@@ -1,0 +1,220 @@
+/**
+ * Responsive CSS - Mobile and Tablet Styles
+ */
+
+/* Tablet (768px - 1024px) */
+@media (max-width: 1024px) {
+  :root {
+    --sidebar-width: 240px;
+  }
+  
+  .search-title {
+    font-size: 2rem;
+  }
+  
+  /* Stack Results */
+  .results-layout {
+    flex-direction: column;
+  }
+  
+  .official-boleta,
+  .credit-card {
+    flex: none;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  /* Data Grid - 2 columns on tablet */
+  .data-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobile (< 768px) */
+@media (max-width: 768px) {
+  :root {
+    --sidebar-width: 100%;
+    --spacing-xl: 1.5rem;
+    --spacing-2xl: 1rem;
+  }
+  
+  /* Sidebar handling (even if removed, keep for safety) */
+  .sidebar {
+    display: none; 
+  }
+  
+  .main-content {
+    margin-left: 0;
+  }
+  
+  /* Header */
+  .app-header {
+    padding: 0.75rem var(--spacing-md);
+  }
+  
+  .header-content {
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+  
+  /* Search */
+  .search-title {
+    font-size: 1.5rem;
+  }
+  
+  .search-subtitle {
+    font-size: 1rem;
+  }
+  
+  .search-box {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .search-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  /* Results Layout STACK */
+  .results-layout {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .official-boleta,
+  .credit-card {
+    flex: none;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  /* Official Boleta Mobile Overrides */
+  .official-boleta {
+    font-size: 13px !important; /* Slightly smaller on mobile if needed */
+  }
+
+  .official-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+  }
+
+  .header-left, .header-center, .header-right {
+    text-align: center;
+    width: 100%;
+  }
+  
+  .header-center h1 {
+    font-size: 20px !important;
+  }
+
+  /* Data Grid - 1 column on mobile */
+  .data-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px;
+  }
+  
+  /* Details Container - Stack items */
+  .details-container {
+    flex-direction: column;
+  }
+  
+  .details-column {
+    border-right: none;
+    border-bottom: 1px solid #d1d5db;
+  }
+  
+  .details-column:last-child {
+    border-bottom: none;
+  }
+  
+  /* Credit Card */
+  .credit-header {
+    padding: 0.75rem;
+  }
+  
+  .credit-body {
+    padding: 0.75rem;
+  }
+  
+  .credit-table td {
+    font-size: 0.8rem;
+  }
+
+  /* Action Buttons */
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  .btn {
+    width: 100%;
+  }
+  
+  /* Toast */
+  .toast {
+    min-width: auto;
+    max-width: calc(100vw - 2rem);
+  }
+  
+  .toast-container {
+    left: var(--spacing-md);
+    right: var(--spacing-md);
+    top: var(--spacing-md);
+  }
+}
+
+/* Small Mobile (< 480px) */
+@media (max-width: 480px) {
+  .search-title {
+    font-size: 1.25rem;
+  }
+  
+  .view-container {
+    padding: var(--spacing-sm);
+  }
+  
+  .boleta-container {
+    padding: var(--spacing-sm);
+  }
+}
+
+/* Print Styles */
+@media print {
+  .sidebar,
+  .app-header,
+  .search-form,
+  .action-buttons,
+  .footer,
+  .loading-overlay,
+  .toast-container,
+  .admin-lock-btn {
+    display: none !important;
+  }
+  
+  .main-content {
+    margin: 0;
+    padding: 0;
+  }
+  
+  .view-container {
+    padding: 0;
+    max-width: 100%;
+  }
+  
+  .results-layout {
+    display: block; /* Print one after another */
+  }
+  
+  .official-boleta,
+  .credit-card {
+    page-break-inside: avoid;
+    width: 100%;
+    margin-bottom: 2rem;
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+}
