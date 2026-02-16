@@ -15,9 +15,8 @@
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/components.css">
     <link rel="stylesheet" href="assets/css/responsive.css">
-    <!-- Font Awesome (Defer loading via media hack or keep as critical if needed) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-        media="print" onload="this.media='all'">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml"
@@ -29,42 +28,34 @@
 
     <!-- ... (Loading Overlay and Toast Container stay same) ... -->
 
-    <!-- External Libraries (Deferred) -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js" defer></script>
+    <!-- External Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
     <!-- PDF.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script>
-        // Set worker immediately if possible, or wait for load. 
-        // With defer, inline scripts executed after parsing but before deferred scripts? No, inline runs immediately.
-        // PDF.js worker setup needs to be careful with defer.
-        // Setting it via a deferred script or event listener is safer.
-        window.addEventListener('DOMContentLoaded', () => {
-            if (window.pdfjsLib) {
-                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-            }
-        });
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     </script>
     <!-- Tesseract.js (OCR) -->
-    <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js' defer></script>
+    <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
 
     <!-- Configuration -->
-    <script src="config.js" defer></script>
+    <script src="config.js"></script>
 
     <!-- Utilities -->
-    <script src="assets/js/utils/helpers.js" defer></script>
-    <script src="assets/js/utils/parser.js" defer></script>
-    <script src="assets/js/utils/pdf_parser.js" defer></script>
-    <script src="assets/js/utils/supabase.js" defer></script>
+    <script src="assets/js/utils/helpers.js"></script>
+    <script src="assets/js/utils/parser.js"></script>
+    <script src="assets/js/utils/pdf_parser.js"></script>
+    <script src="assets/js/utils/supabase.js"></script>
 
     <!-- Components -->
-    <script src="assets/js/components/search.js" defer></script>
-    <script src="assets/js/components/admin.js" defer></script>
-    <script src="assets/js/utils/credit_eval.js" defer></script>
-    <script src="assets/js/components/viewer.js" defer></script>
+    <script src="assets/js/components/search.js"></script>
+    <script src="assets/js/components/admin.js"></script>
+    <script src="assets/js/utils/credit_eval.js"></script>
+    <script src="assets/js/components/viewer.js"></script>
 
     <!-- Main Application -->
-    <script src="assets/js/app.js" defer></script>
+    <script src="assets/js/app.js"></script>
 
     <!-- PWA Service Worker Registration -->
     <script>
