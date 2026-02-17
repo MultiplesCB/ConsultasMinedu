@@ -95,7 +95,7 @@ function parsePDFDataWithCoords(items, pageWidth) {
     'Liquido': 0.0
   };
 
-  const splitX = pageWidth / 2; // Approx 300 for A4 (595 width)
+  let splitX = pageWidth / 2; // Approx 300 for A4 (595 width)
 
   // 1. Extract Header Info & Totals (Global Search)
   // We join all text for easier Regex matching of labeled fields

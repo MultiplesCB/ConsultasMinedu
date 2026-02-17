@@ -66,15 +66,14 @@ function parseLISContent(content) {
     if (/PROC|FECHA/i.test(line)) {
       const dateMatch = line.match(/(\d{2})\/(\d{2})\/(\d{4})/);
       if (dateMatch) {
-         // Try to convert DD/MM/YYYY to Month Year if possible, otherwise keep date
-         // But user specifically wants the PERIODO field.
-         // Let's keep this as fallback but maybe format it too?
-         // For now, let's just stick to the requested PERIODO field logic as priority.
-         // If we only find full date, better to leave it as is or try to extract month??
-         // User said: "en la imagen 2 la boleta sale periodo como fecha que dice 22/01/2026 y eso no es lo correcto"
-         // So let's try to extract month from this date too as a safe fallback?
-         // No, let's strict to PERIODO field first.
-         periodo = dateMatch[0];
+         // Convert DD/MM/YYYY to Month Year
+         const monthIndex = parseInt(dateMatch[2], 10) - 1;
+         const year = dateMatch[3];
+         if (monthIndex >= 0 && monthIndex < 12) {
+            periodo = `${months[monthIndex]} ${year}`; // e.g. ENERO 2026
+         } else {
+            periodo = dateMatch[0]; // fallback to date if month invalid
+         }
       }
     }
   }

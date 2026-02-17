@@ -82,16 +82,15 @@ function calculateCreditCapacity(record) {
             for (const kw of legalKeywords) {
               // Improved matching: check word boundaries or specific substrings
               if (lowerKey.includes(kw)) {
-                
-                // Exception: "Prestamo Judicial" is NOT a legal discount? 
-                // Wait, "Judicial" usually *is* a legal discount (retention).
-                // "Prestamo" is usually personal.
-                // Let's assume Judicial is always legal per user request (Descuentos de Ley).
-                
                 isLegal = true;
                 break;
               }
             }
+          }
+          
+          // CRITICAL FIX: Explicitly exclude SUBCAFAE/CAFAE if they somehow matched
+          if (lowerKey.includes('subcafe') || lowerKey.includes('cafae') || lowerKey.includes('subcafae')) {
+             isLegal = false;
           }
           
           if (isLegal) {
