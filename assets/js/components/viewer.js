@@ -27,8 +27,7 @@ function renderBoleta(record, container, fullDetails = false) {
 
   // Right: Period/Info
   const headerRight = createElement('div', { className: 'header-right' });
-  headerRight.appendChild(createElement('div', {}, ['UGEL CORONEL PORTILLO'])); // Hardcoded based on image, or generic
-  headerRight.appendChild(createElement('div', {}, ['RUC 20393274655'])); // Hardcoded or config
+  headerRight.appendChild(createElement('div', {}, [`UGEL ${record.ugel || 'CORONEL PORTILLO'}`]));
   headerRight.appendChild(createElement('div', { className: 'periodo-highlight' }, [record.Periodo || '']));
   
   header.appendChild(headerLeft);

@@ -243,14 +243,21 @@ async function handleFileUpload(e) {
       return;
     }
     
-    // Store data
-    uploadedData = data;
+    // Store data with UGEL info
+    const ugelSelect = document.getElementById('ugel-select');
+    const selectedUgel = ugelSelect ? ugelSelect.value : 'CORONEL PORTILLO';
+    
+    // Attach UGEL to every record
+    uploadedData = data.map(record => ({
+        ...record,
+        ugel: selectedUgel
+    }));
     
     // Show success message
     const successMsg = createElement('div', { className: 'success-message' }, [
       createElement('p', {}, [
         createElement('i', { className: 'fa-solid fa-circle-check', style: 'margin-right: 0.5rem;' }),
-        `Archivo procesado: ${data.length} registros válidos`
+        `Archivo procesado: ${data.length} registros válidos (${selectedUgel})`
       ]),
       createElement('p', {}, [
         createElement('i', { className: 'fa-regular fa-lightbulb', style: 'color: var(--warning); margin-right: 0.5rem;' }),

@@ -24,7 +24,10 @@ CREATE TABLE IF NOT EXISTS boletas (
     
     -- Constraint to avoid duplicates for same period/dni/cargo
     -- OLD: UNIQUE(periodo, dni)
-    UNIQUE(periodo, dni, codigo_cargo)
+    UNIQUE(periodo, dni, codigo_cargo),
+    
+    -- Added for Multi-UGEL support (2026-02-18)
+    ugel TEXT DEFAULT 'CORONEL PORTILLO'
 );
 
 -- MIGRATION COMMANDS (Run these if table already exists)

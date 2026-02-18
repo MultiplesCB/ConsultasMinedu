@@ -148,6 +148,7 @@ async function syncDataToSupabase(records, onProgress = null) {
       nivel_magisterial: rec['Nivel Magisterial'] || '',
       codigo_situacion: rec['Codigo Situacion'] || '',
       leyenda: rec['Leyenda'] || '',
+      ugel: rec.ugel || 'CORONEL PORTILLO',
       
       json_data: rec
     }));

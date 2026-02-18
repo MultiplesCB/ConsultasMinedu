@@ -56,7 +56,11 @@ function calculateCreditCapacity(record) {
         'derrama', 'sutep' // Removed 'subcafe', 'cafae' as they are NOT legal discounts
     ];
     // Strict codes for LIS
-    const legalCodes = ['0002', '0113', '0121', '0004', '0001'];
+    const legalCodes = [
+        '0001', '0002', '0003', '0004', '0009', '0013', '0027', '0029', '0054', 
+        '0109', '0110', '0111', '0112', '0113', '0115', '0118', '0121', '0127', 
+        '1145', '1146', '1371'
+    ];
     
     Object.entries(record).forEach(([key, value]) => {
       // Check if it's an Discount item
