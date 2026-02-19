@@ -247,11 +247,27 @@ async function handleFileUpload(e) {
     const ugelSelect = document.getElementById('ugel-select');
     const selectedUgel = ugelSelect ? ugelSelect.value : 'CORONEL PORTILLO';
     
-    // Attach UGEL to every record
-    uploadedData = data.map(record => ({
-        ...record,
-        ugel: selectedUgel
-    }));
+    // Attach UGEL and Credit Eval to every record
+    uploadedData = data.map(record => {
+        let creditFields = {};
+        
+        // Calculate Credit Capacity if function exists
+        if (typeof calculateCreditCapacity === 'function') {
+            const result = calculateCreditCapacity(record);
+            if (result) {
+                creditFields = {
+                    'Capacidad 50%': result.maxCapacity50,
+                    'SALDO DISPONIBLE': result.saldoDisponible
+                };
+            }
+        }
+
+        return {
+            ...record,
+            ugel: selectedUgel,
+            ...creditFields
+        };
+    });
     
     // Show success message
     const successMsg = createElement('div', { className: 'success-message' }, [

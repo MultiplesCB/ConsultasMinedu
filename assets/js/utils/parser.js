@@ -26,7 +26,21 @@ function parseLISContent(content) {
   
   // Details pattern
   // Details pattern (Added (?<=[a-zA-Z]) to allow match after text like "EDUCACION+177")
-  const detailPattern = /(?:^|\s|(?<=\.\d{2})|(?<=[a-zA-Z]))([+-])(\d{3,4})\s+((?:(?![+-]\d{3}).)+?)\s{2,}([\d,]+\.\d{2})/g;
+  // Details pattern (Improved for merged codes like "-1535", allows single space before amount)
+  // 1. ([+-]) -> Sign
+  // 2. (\d{3,4}) -> Code
+  // 3. \s+ -> Mandatory space after code
+  // 4. ((?:(?![+-]\d{3}).)+?) -> Name (non-greedy, stops before next code)
+  // 5. \s+ -> Space before amount (reduced from \s{2,} to \s+ to handle tight formatting)
+  // 6. ([\d,]+\.\d{2}) -> Amount
+  // Details pattern (Improved again: Removed start anchors to handle ANY merged case like "...VA8-1535" or "...00-1535")
+  // 1. ([+-]) -> Sign
+  // 2. (\d{3,4}) -> Code
+  // 3. \s+ -> Mandatory space after code
+  // 4. ((?:(?![+-]\d{3}).)+?) -> Name (non-greedy)
+  // 5. \s+ -> Space before amount
+  // 6. ([\d,]+\.\d{2}) -> Amount
+  const detailPattern = /([+-])(\d{3,4})\s+((?:(?![+-]\d{3}).)+?)\s+([\d,]+\.\d{2})(?=\s|$)/g;
   
   // Continuation line pattern
   const continuationPattern = /^(\d{6})\s+(.*)/;
